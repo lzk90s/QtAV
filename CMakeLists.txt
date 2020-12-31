@@ -10,6 +10,7 @@ set(SO_VERSION ${QTAV_MAJOR})
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(BUILD_QTAV_STATIC 1)
 
 if(POLICY CMP0063) # visibility. since 3.3
   cmake_policy(SET CMP0063 NEW)
@@ -26,6 +27,7 @@ option(BUILD_PLAYERS "Build players" ON)
 option(BUILD_TESTS "Build tests" ON)
 option(BUILD_QT5OPENGL "Build with Qt5 OpenGL module" ON)
 option(BUILD_QML "Build QML interfaces" ON)
+option(BUILD_STATIC "Build static library" OFF)
 
 list(APPEND CMAKE_FIND_ROOT_PATH ${QTDIR})
 
@@ -114,6 +116,10 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio.*")
     include_directories(${UCRT_INCLUDE})
     link_libraries(${CMAKE_LIBRARY_PATH_FLAG}${UCRT_LIB})
   endif()
+endif()
+
+if(BUILD_STATIC)
+  add_definitions(-DBUILD_QTAV_STATIC -DBUILD_QTAVWIDGETS_STATIC -DBUILD_COMMON_STATIC)
 endif()
 
 add_subdirectory(src)

@@ -28,13 +28,22 @@ SOURCE_GROUP("Resources" FILES ${COMMON_QRC})
 qt5_add_resources(COMMON_RES ${COMMON_QRC})
 set_source_files_properties(${COMMON_RES} PROPERTIES GENERATED ON)
 
+SET(BUILD_TYPE SHARED)
+if(BUILD_COMMON_STATIC)
+  SET(BUILD_TYPE STATIC)
+  list(APPEND EXTRA_DEFS -DBUILD_COMMON_STATIC)
+  if(NOT WIN32)
+    list(APPEND SYS_LIBS -lpthread -ldl -lGL)
+  endif()
+endif()
+
 # add HEADERS for moc
-add_library(common STATIC ${COMMON_SRC} ${COMMON_RES} ${COMMON_HEADERS})
+add_library(common ${BUILD_TYPE} ${COMMON_SRC} ${COMMON_RES} ${COMMON_HEADERS})
 target_link_libraries(common
   LINK_PUBLIC Qt5::Core Qt5::Gui ${COMMON_LIBS}
   LINK_PRIVATE Qt5::Sql
 )
-target_compile_definitions(common PUBLIC -DBUILD_COMMON_STATIC)
+target_compile_definitions(common PRIVATE ${EXTRA_DEFS})
 target_include_directories(common PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(PLAYER_SRC
@@ -123,7 +132,8 @@ if(Qt5Widgets_FOUND)
     configure_file(${QTAV_SOURCE_DIR}/cmake/QtAV.rc.in ${RC_FILE})
   endif()
   add_executable(Player ${EXE_TYPE} ${PLAYER_SRC} ${PLAYER_HEADERS} ${PLAYER_RES} ${RC_FILE})
-  target_link_libraries(Player QtAVWidgets common)
+  target_compile_definitions(Player PRIVATE ${EXTRA_DEFS})
+  target_link_libraries(Player QtAVWidgets common ${SYS_LIBS})
 
   install(TARGETS Player
     RUNTIME DESTINATION ${QTAV_INSTALL_BINS}
@@ -137,31 +147,31 @@ if(Qt5Widgets_FOUND)
     target_link_libraries(filters QtAVWidgets)
 
     add_executable(glslfilter glslfilter/main.cpp)
-    target_link_libraries(glslfilter QtAVWidgets)
+    target_link_libraries(glslfilter QtAVWidgets ${SYS_LIBS})
 
     add_executable(shader shader/main.cpp)
-    target_link_libraries(shader QtAVWidgets)
+    target_link_libraries(shader QtAVWidgets ${SYS_LIBS})
 
     add_executable(sharedoutput sharedoutput/main.cpp sharedoutput/widget.cpp)
-    target_link_libraries(sharedoutput QtAVWidgets)
+    target_link_libraries(sharedoutput QtAVWidgets ${SYS_LIBS})
 
     add_executable(simpleplayer simpleplayer/main.cpp simpleplayer/playerwindow.cpp)
-    target_link_libraries(simpleplayer QtAVWidgets)
+    target_link_libraries(simpleplayer QtAVWidgets ${SYS_LIBS})
 
     add_executable(videocapture videocapture/main.cpp videocapture/playerwindow.cpp)
-    target_link_libraries(videocapture QtAVWidgets)
+    target_link_libraries(videocapture QtAVWidgets ${SYS_LIBS})
 
     add_executable(videographicsitem videographicsitem/main.cpp videographicsitem/videoplayer.cpp)
-    target_link_libraries(videographicsitem QtAVWidgets)
+    target_link_libraries(videographicsitem QtAVWidgets ${SYS_LIBS})
 
     add_executable(videogroup videogroup/main.cpp videogroup/videogroup.cpp)
-    target_link_libraries(videogroup QtAVWidgets)
+    target_link_libraries(videogroup QtAVWidgets ${SYS_LIBS})
 
     add_executable(videowall videowall/main.cpp videowall/VideoWall.cpp)
-    target_link_libraries(videowall QtAVWidgets)
+    target_link_libraries(videowall QtAVWidgets ${SYS_LIBS})
 
     add_executable(simpletranscode simpletranscode/main.cpp)
-    target_link_libraries(simpletranscode QtAV)
+    target_link_libraries(simpletranscode QtAV ${SYS_LIBS})
   endif()
 endif()
 

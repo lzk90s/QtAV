@@ -1,5 +1,5 @@
 set(MODULE QmlAV)
-set(EXTRA_DEFS -DBUILD_QMLAV_LIB)
+list(APPEND EXTRA_DEFS -DBUILD_QMLAV_LIB)
 
 #URI = QtAV #uri used in QtAVQmlPlugin::registerTypes(uri)
 #qtAtLeast(5, 3): QMAKE_MOC_OPTIONS += -Muri=$$URI # not sure what moc does
@@ -34,7 +34,13 @@ if(WIN32)
   set(RC_FILE ${CMAKE_CURRENT_BINARY_DIR}/${MODULE}.rc)
   configure_file(${QTAV_SOURCE_DIR}/cmake/QtAV.rc.in ${RC_FILE})
 endif()
-add_library(${MODULE} SHARED ${SOURCES} ${RESOURCES_SOURCES} ${HEADERS} ${RC_FILE})
+
+SET(BUILD_TYPE SHARED)
+if(BUILD_QTAVQML_STATIC)
+  SET(BUILD_TYPE STATIC)
+endif()
+
+add_library(${MODULE} ${BUILD_TYPE} ${SOURCES} ${RESOURCES_SOURCES} ${HEADERS} ${RC_FILE})
 target_link_libraries(${MODULE}
   LINK_PRIVATE ${EXTRA_LIBS}
   LINK_PUBLIC QtAV Qt5::Qml Qt5::Quick

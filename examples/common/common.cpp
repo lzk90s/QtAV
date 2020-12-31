@@ -51,6 +51,7 @@ using namespace ABI::Windows::Foundation::Collections;
 using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::Storage::Pickers;
 
+
 #define COM_LOG_COMPONENT "WinRT"
 #define COM_ENSURE(f, ...) COM_CHECK(f, return __VA_ARGS__;)
 #define COM_WARN(f) COM_CHECK(f)

@@ -133,6 +133,9 @@ int GLSLVersion()
         return 0;
     }
     const char* vs = (const char*)DYGL(glGetString(GL_SHADING_LANGUAGE_VERSION));
+    if (nullptr == vs){
+        return v;
+    }
     int major = 0, minor = 0;
     // es: "OpenGL ES GLSL ES 1.00 (ANGLE 2.1.99...)" can use ""%*[ a-zA-Z] %d.%d" in sscanf, desktop: "2.1"
     //QRegExp rx("(\\d+)\\.(\\d+)");

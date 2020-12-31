@@ -29,6 +29,8 @@
 #include "config/PropertyEditor.h"
 #include "MainWindow.h"
 #include "../common/common.h"
+#include <QtPlugin>
+
 
 using namespace QtAV;
 static const struct {
@@ -58,6 +60,16 @@ VideoRendererId rendererId_from_opt_name(const QString& name) {
 #endif
     return VideoRendererId_Widget;
 }
+
+
+#if defined(USE_STATIC_QT)
+#if defined(Q_OS_WINRT)
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+#endif
+#if defined(Q_OS_LINUX)
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+#endif
+#endif
 
 int main(int argc, char *argv[])
 {

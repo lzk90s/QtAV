@@ -1,6 +1,7 @@
 set(MODULE QtAV)
 # TODO: translations, rpath, uchardet, x11extras, android
 
+
 include(CheckCCompilerFlag)
 include(CheckCXXSourceCompiles)
 include(CheckIncludeFile)
@@ -11,6 +12,7 @@ INCLUDE(CheckTypeSize)
 # set qt dirs first so we can find depends in qt install dir
 include_directories(${QTDIR}/include) #TODO: remove. use external/include
 get_filename_component(QTDIR "${QTDIR}" ABSOLUTE)
+
 
 find_package(PkgConfig)
 
@@ -495,7 +497,12 @@ if(WIN32)
   configure_file(${QTAV_SOURCE_DIR}/cmake/QtAV.rc.in ${RC_FILE})
 endif()
 # add HEADERS for moc
-add_library(${MODULE} SHARED ${SOURCES} ${RESOURCES_SOURCES} ${HEADERS} ${RC_FILE})
+
+SET(BUILD_TYPE SHARED)
+if(BUILD_QTAV_STATIC)
+  SET(BUILD_TYPE STATIC)
+endif()
+add_library(${MODULE} ${BUILD_TYPE} ${SOURCES} ${RESOURCES_SOURCES} ${HEADERS} ${RC_FILE})
 
 list(REMOVE_DUPLICATES EXTRA_LIBS)
 # qt5_use_modules(since 2.8.9) is deprecated since cmake 2.8.11
